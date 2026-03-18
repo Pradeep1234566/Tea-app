@@ -1,0 +1,32 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../lib/generated/prisma"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+model Room {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  users     User[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  roomId    String
+  createdAt DateTime @default(now())
+  room      Room     @relation(fields: [roomId], references: [id])
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  target    String
+  createdAt DateTime @default(now())
+}

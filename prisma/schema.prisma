@@ -1,0 +1,62 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// FILE: prisma/schema.prisma   (updated — added createdAt fields)
+// ─────────────────────────────────────────────────────────────────────────────
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Room {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  users     User[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  roomId    String
+  createdAt DateTime @default(now())   // ← added: needed for ordered player list
+  room      Room     @relation(fields: [roomId], references: [id])
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  target    String
+  createdAt DateTime @default(now())
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FILE: app/globals.css
+// ─────────────────────────────────────────────────────────────────────────────
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #050508;
+  color: white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
